@@ -1,1 +1,47 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    /* ===== BASE ===== */
+    /* Un negro café más profundo para que el beige resalte */
+    --background: #1a1510;
+    /* Café base */
+    --foreground: #f2e6d5;
+    /* Beige más limpio (subido para contraste) */
+
+    /* SURFACES */
+    --card: #241d16;
+    --card-foreground: #f2e6d5;
+    --popover: #241d16;
+    --popover-foreground: #f2e6d5;
+
+    /* PRIMARY (Botones principales / Texto fuerte) */
+    --primary: #e8dcc8;
+    --primary-foreground: #1a1510;
+
+    /* SECONDARY (Botones sutiles) */
+    --secondary: #32291e;
+    /* Un poco más claro que la card para que se vea */
+    --secondary-foreground: #f2e6d5;
+
+    /* MUTED (Texto secundario y fondos sutiles) */
+    --muted: #2a221a;
+    --muted-foreground: #b5a48b;
+    /* Subido de #9b a #b5 para que sea legible */
+
+    /* ACCENT (Highlight para hover o elementos activos) */
+    --accent: #3d3224;
+    /* Más claro que la card para que el hover se note */
+    --accent-foreground: #f2e6d5;
+
+    /* STATES */
+    --destructive: #d4614a;
+    --destructive-foreground: #faf8f3;
+
+    /* BORDERS - El truco del contraste */
+    --border: rgba(232, 220, 200, 0.2);
+    /* Subido de 0.15 a 0.2 */
+    --input: rgba(232, 220, 200, 0.12);
+    --ring: #e8dcc8;
+}
