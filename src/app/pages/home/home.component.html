@@ -15,7 +15,7 @@
                 </button>
                 <button
                     class="px-8 py-3 bg-primary text-primary-foreground rounded-lg text-lg hover:bg-primary/90 transition-colors"
-                    (click)="openLoginModal()">
+                    (click)="openUserModal()">
                     Iniciar sesión
                 </button>
             </div>
@@ -67,5 +67,5 @@
     </main>
 </div>
 @if (showLogin) {
-<app-auth (close)="closeLoginModal()"></app-auth>
+<app-auth (close)="closeUserModal()"></app-auth>
 }

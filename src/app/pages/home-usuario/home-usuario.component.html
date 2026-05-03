@@ -1,0 +1,78 @@
+<main class="container mx-auto px-4 py-8">
+
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+            <h2 class="text-4xl font-bold mb-2">
+                Hola, {{ authService.usuarioActual().nombre }} 👋
+            </h2>
+            <p class="text-muted-foreground text-lg italic">
+                "Tu biblioteca es tu paraíso personal"
+            </p>
+        </div>
+
+        <!-- Buscador -->
+        <div class="relative w-full md:w-80">
+            <input type="text" (input)="searchQuery.set($any($event.target).value)"
+                placeholder="Buscar por título o autor..."
+                class="w-full pl-10 pr-4 py-2.5 border rounded-2xl bg-card focus:ring-2 focus:ring-primary outline-none transition-all">
+            <span class="absolute left-3 top-3 text-muted-foreground">🔍</span>
+        </div>
+    </div>
+
+    <!-- Tabs de Filtro -->
+    <div class="mb-8 flex flex-wrap gap-2">
+        @for (f of ['todos', 'leyendo', 'leido', 'pendiente']; track f) {
+        <button (click)="setFilter(f)" [class.bg-primary]="currentFilter() === f"
+            [class.text-primary-foreground]="currentFilter() === f" [class.bg-muted]="currentFilter() !== f"
+            class="px-6 py-2 rounded-xl text-sm font-semibold capitalize transition-all hover:scale-105">
+            {{ f }}
+        </button>
+        }
+    </div>
+
+    <!-- Rejilla de Libros -->
+    @if (bibliotecaData()?.libros?.length > 0) {
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+        @for (libro of filteredBooks(); track libro.id) {
+        <div class="group relative">
+            <app-libro-card [libro]="libro" (click)="openBookDetail(libro)" class="cursor-pointer">
+            </app-libro-card>
+
+            <!-- Badge de estado rápido -->
+            <span
+                class="absolute top-2 right-2 px-2 py-1 rounded-md text-[10px] font-bold uppercase bg-black/60 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                {{ libro.pivot?.estado_lectura }}
+            </span>
+        </div>
+        }
+    </div>
+
+    @if (filteredBooks().length === 0) {
+    <div class="text-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed border-border">
+        <p class="text-muted-foreground text-lg">No hay libros con el estado: <b>{{ currentFilter() }}</b></p>
+    </div>
+    }
+
+    } @else {
+    <!-- Vista vacía -->
+    <div class="text-center py-24 bg-card rounded-[3rem] border-2 border-dashed border-primary/20 shadow-inner">
+        <div class="text-7xl mb-6">🏜️</div>
+        <h3 class="text-3xl font-bold mb-3 text-foreground">Tu biblioteca está desierta</h3>
+        <p class="text-muted-foreground mb-10 max-w-md mx-auto text-lg">
+            Parece que aún no has añadido ningún libro. ¡Explora el catálogo y empieza tu aventura literaria!
+        </p>
+        <button
+            class="px-10 py-4 bg-primary text-primary-foreground rounded-2xl font-black text-lg hover:shadow-[0_0_20px_rgba(var(--primary),0.4)] transition-all active:scale-95">
+            🔍 BUSCAR LIBROS AHORA
+        </button>
+    </div>
+    }
+
+    <!-- Modal de Detalle (el "Global Handler" de errores de Laravel nos protege aquí) -->
+    @if (LibroService.selectedBook()) {
+    <app-libro-detalle [libro]="LibroService.selectedBook()!" (closeDialog)="LibroService.clearSelectedBook()"
+        (changed)="onLibraryChanged()">
+    </app-libro-detalle>
+    }
+</main>

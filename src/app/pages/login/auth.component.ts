@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
+import { Router } from '@angular/router';
 
 // Definimos los modos posibles para mayor claridad
 type AuthMode = 'login' | 'register';
@@ -19,7 +20,7 @@ export class AuthComponent {
   mode: AuthMode = 'login';
 
   // Propiedades del formulario
-  username = '';
+  nombre = '';
   email = '';
   password = '';
 
@@ -28,7 +29,7 @@ export class AuthComponent {
     return this.mode === 'login';
   }
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   onClose(): void {
     this.close.emit();
@@ -42,7 +43,7 @@ export class AuthComponent {
 
   handleSubmit(): void {
     // Validación básica antes de enviar
-    if (!this.email || !this.password) {
+    if (!this.email || !this.password || !this.isLogin && !this.nombre) {
       console.warn('Formulario incompleto');
       return;
     }
@@ -57,19 +58,20 @@ export class AuthComponent {
   private login(): void {
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
-        console.log('Login exitoso', response);
+        console.log('Login exitoso');
         this.onClose();
+        this.router.navigate(['/home']);
       },
       error: (err) => console.error('Error en login:', err)
     });
   }
 
   private register(): void {
-    this.authService.register(this.email, this.password).subscribe({
+    this.authService.register(this.nombre, this.email, this.password).subscribe({
       next: (response) => {
-        console.log('Registro exitoso', response);
-        // Opcional: Pasar a modo login o cerrar directamente
-        this.mode = 'login';
+        console.log('Registro exitoso');
+        this.onClose();
+        this.router.navigate(['/home']);
       },
       error: (err) => console.error('Error en registro:', err)
     });

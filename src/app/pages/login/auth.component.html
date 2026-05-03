@@ -12,7 +12,7 @@
     <!-- Header -->
     <header class="text-center mb-8">
       <h2 class="text-3xl font-bold text-[--foreground] tracking-tight">
-        {{ isLogin ? 'Bienvenido' : 'Únete a Linkbuk' }}
+        {{ isLogin ? 'Bienvenido a Linkbuk' : 'Únete a Linkbuk' }}
       </h2>
       <p class="text-[--muted-foreground] mt-2 text-sm">
         {{ isLogin ? 'Introduce tus credenciales para acceder' : 'Completa los datos para empezar' }}
@@ -20,6 +20,15 @@
     </header>
 
     <form (ngSubmit)="handleSubmit()" #authForm="ngForm">
+      @if(!isLogin) {
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1.5 text-[--foreground]">
+          Nombre de Usuario
+        </label>
+        <input [(ngModel)]="nombre" name="nombre" type="text" required placeholder="Alias"
+          class="w-full px-4 py-2.5 rounded-lg bg-[--background] border border-[--border] text-[--foreground] placeholder:text-[--muted-foreground]/50 focus:ring-2 focus:ring-[--primary] focus:border-transparent outline-none transition-all" />
+      </div>
+      }
 
       <!-- Email Field -->
       <div class="mb-4">

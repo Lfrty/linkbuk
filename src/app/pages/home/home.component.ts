@@ -15,12 +15,12 @@ export class Home {
 
   showLogin = false;
 
-  openLoginModal() {
+  openUserModal() {
     console.log("Abro modal");
     this.showLogin = true;
   }
 
-  closeLoginModal() {
+  closeUserModal() {
     this.showLogin = false;
   }
 

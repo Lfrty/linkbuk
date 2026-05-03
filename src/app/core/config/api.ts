@@ -7,4 +7,15 @@ export const API = {
         logout: `${environment.apiUrl}/auth/logout`,
         registar: `${environment.apiUrl}/auth/registrar`,
     },
+
+    biblioteca: {
+        listar: `${environment.apiUrl}/biblioteca`,
+        estadoLibro: `${environment.apiUrl}/biblioteca/estadoLibro`,
+        eliminar: `${environment.apiUrl}/biblioteca/eliminar`,
+    },
+
+    libro: {
+        search: `${environment.apiUrl}/libros/search`,
+        detalle: `${environment.apiUrl}/libros/detalle`,
+    },
 };

@@ -1,0 +1,95 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <!-- Fondo / Backdrop -->
+    <div (click)="cerrar.emit()" class="absolute inset-0 bg-gray-900/90 backdrop-blur-sm"></div>
+
+    <!-- Modal -->
+    <div
+        class="relative bg-white dark:bg-gray-950 w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+
+        <div class="flex flex-col md:flex-row">
+            <!-- Lateral Izquierdo: Imagen y Estados -->
+            <div
+                class="w-full md:w-2/5 bg-gray-50 dark:bg-gray-900 p-6 flex flex-col items-center border-r border-gray-100 dark:border-gray-800">
+                <img [src]="libro?.portada || 'assets/no-cover.png'" [alt]="libro?.titulo"
+                    class="w-full max-w-[200px] rounded-lg shadow-2xl mb-8" />
+
+                <div class="w-full space-y-3">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center mb-4">Mi
+                        Progreso</p>
+
+                    <!-- Botón: Pendiente -->
+                    <button (click)="cambiarEstado('pendiente')"
+                        [class]="libro?.estado === 'pendiente' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' : 'bg-white dark:bg-gray-800 text-gray-600 border border-gray-200 dark:border-gray-700'"
+                        class="w-full py-3 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                        <span>{{ libro?.estado === 'pendiente' ? '✓ Lo quiero leer' : 'Quiero leerlo' }}</span>
+                    </button>
+
+                    <!-- Botón: Leyendo -->
+                    <button (click)="cambiarEstado('leyendo')"
+                        [class]="libro?.estado === 'leyendo' ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30' : 'bg-white dark:bg-gray-800 text-gray-600 border border-gray-200 dark:border-gray-700'"
+                        class="w-full py-3 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                        <span>{{ libro?.estado === 'leyendo' ? '📖 Leyendo ahora' : 'Empezar lectura' }}</span>
+                    </button>
+
+                    <!-- Botón: Leído -->
+                    <button (click)="cambiarEstado('leido')"
+                        [class]="libro?.estado === 'leido' ? 'bg-green-600 text-white shadow-lg shadow-green-500/30' : 'bg-white dark:bg-gray-800 text-gray-600 border border-gray-200 dark:border-gray-700'"
+                        class="w-full py-3 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                        <span>{{ libro?.estado === 'leido' ? '✅ ¡Leído!' : 'Marcar como leído' }}</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Contenido Derecho: Información -->
+            <div class="flex-1 p-8">
+                <button (click)="cerrar.emit()"
+                    class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <header class="mb-6">
+                    <h2
+                        class="text-3xl font-black text-gray-900 dark:text-white leading-tight mb-2 italic underline decoration-orange-500 decoration-4 underline-offset-4">
+                        {{ libro?.titulo }}
+                    </h2>
+                    <p class="text-xl text-orange-600 font-semibold italic">{{ libro?.autor }}</p>
+                </header>
+
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg border border-gray-100 dark:border-gray-800">
+                        <p class="text-[10px] text-gray-400 uppercase font-bold mb-1">Publicación</p>
+                        <p class="text-sm font-mono dark:text-gray-200">{{ libro?.anyo_publicacion || 'Desconocido' }}
+                        </p>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg border border-gray-100 dark:border-gray-800">
+                        <p class="text-[10px] text-gray-400 uppercase font-bold mb-1">Extensión</p>
+                        <p class="text-sm font-mono dark:text-gray-200">{{ libro?.paginas ? libro?.paginas + ' páginas'
+                            : 'Tapa dura/blanda' }}</p>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <h4 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 mb-3 font-black">Sinopsis</h4>
+                    <div class="max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed italic">
+                            {{ libro?.descripcion || 'No hay una descripción detallada para esta obra en los registros
+                            actuales.' }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Footer del Modal -->
+                <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 flex justify-between items-center">
+                    <span class="text-[10px] text-gray-300 font-mono tracking-tighter">REF: {{ libro?.work_key }}</span>
+                    <div class="flex gap-2">
+                        <div class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
+                        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
