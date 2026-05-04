@@ -10,33 +10,47 @@
             <!-- Lateral Izquierdo: Imagen y Estados -->
             <div
                 class="w-full md:w-2/5 bg-gray-50 dark:bg-gray-900 p-6 flex flex-col items-center border-r border-gray-100 dark:border-gray-800">
-                <img [src]="libro?.portada || 'assets/no-cover.png'" [alt]="libro?.titulo"
-                    class="w-full max-w-[200px] rounded-lg shadow-2xl mb-8" />
+                <img [src]="libro?.portada || 'assets/img/no-cover.jpg'"
+                    (error)="$any($event.target).src = ''; $any($event.target).style.display = 'none'"
+                    [alt]="libro?.titulo" class="w-full max-w-[200px] rounded-lg shadow-2xl mb-8" />
 
                 <div class="w-full space-y-3">
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center mb-4">Mi
-                        Progreso</p>
+                    @if (authService.isAuthenticated()) {
 
                     <!-- Botón: Pendiente -->
                     <button (click)="cambiarEstado('pendiente')"
-                        [class]="libro?.estado === 'pendiente' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' : 'bg-white dark:bg-gray-800 text-gray-600 border border-gray-200 dark:border-gray-700'"
+                        [class]="libro?.pivot?.estado_lectura=== 'pendiente' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' : 'bg-white dark:bg-gray-800 text-gray-600 border border-gray-200 dark:border-gray-700'"
                         class="w-full py-3 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
-                        <span>{{ libro?.estado === 'pendiente' ? '✓ Lo quiero leer' : 'Quiero leerlo' }}</span>
+                        <span>{{ libro?.pivot?.estado_lectura=== 'pendiente' ? 'Lo quiero leer' : 'Quiero leerlo'
+                            }}</span>
                     </button>
 
                     <!-- Botón: Leyendo -->
                     <button (click)="cambiarEstado('leyendo')"
-                        [class]="libro?.estado === 'leyendo' ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30' : 'bg-white dark:bg-gray-800 text-gray-600 border border-gray-200 dark:border-gray-700'"
+                        [class]="libro?.pivot?.estado_lectura === 'leyendo' ? 'bg-orange-500 text-white shadow-lg' : 'bg-white text-gray-600 border'"
                         class="w-full py-3 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
-                        <span>{{ libro?.estado === 'leyendo' ? '📖 Leyendo ahora' : 'Empezar lectura' }}</span>
+                        <span>{{ libro?.pivot?.estado_lectura === 'leyendo' ? '📖 Leyendo ahora' : 'Empezar lectura'
+                            }}</span>
                     </button>
 
                     <!-- Botón: Leído -->
-                    <button (click)="cambiarEstado('leido')"
-                        [class]="libro?.estado === 'leido' ? 'bg-green-600 text-white shadow-lg shadow-green-500/30' : 'bg-white dark:bg-gray-800 text-gray-600 border border-gray-200 dark:border-gray-700'"
-                        class="w-full py-3 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
-                        <span>{{ libro?.estado === 'leido' ? '✅ ¡Leído!' : 'Marcar como leído' }}</span>
+                    <button (click)="cambiarEstado('leido')" [class]="libro?.pivot?.estado_lectura === 'leido' 
+                        ? 'bg-green-600 text-white shadow-lg' 
+                        : 'bg-white text-gray-600 border border-gray-200'"
+                        class="w-full py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2">
+                        <span>{{ libro?.pivot?.estado_lectura === 'leido' ? '✅ ¡Leído!' : 'Marcar como leído' }}</span>
                     </button>
+                    } @else {
+                    <div class="bg-primary/5 p-4 rounded-xl border border-primary/20 text-center">
+                        <p class="text-xs text-gray-500 mb-4">
+                            Para organizar tus lecturas y guardar este libro, necesitas una cuenta. 📚
+                        </p>
+                        <button (click)="openRegistro()"
+                            class="w-full py-3 bg-primary text-white rounded-xl text-sm font-bold hover:scale-105 transition-all">
+                            Crear cuenta gratis
+                        </button>
+                    </div>
+                    }
                 </div>
             </div>
 

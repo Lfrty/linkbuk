@@ -1,33 +1,48 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { LibroService } from '../../core/services/libro.service';
 import { AuthService } from '../../core/services/auth.service';
+import { BuscadorComponent } from '../../buscador/buscador.component';
+import { Libro } from '../../models/Libro.model';
 
 @Component({
   selector: 'app-header',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, RouterModule, BuscadorComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
-export class Header {
+export class Header implements OnDestroy {
+  public libroService = inject(LibroService);
+  public authService = inject(AuthService);
 
-  constructor(
-    private router: Router,
-    private authService: AuthService
-  ) { }
+  private searchSubject = new Subject<string>();
+  private destroy$ = new Subject<void>();
 
-  showUserMenu = false;
+  searchQuery = signal<string>('');
+  results = signal<Libro[]>([]);
+  showResults = signal(false);
+  showUserMenu = signal(false);
 
-  toggleUserMenu() {
-    this.showUserMenu = !this.showUserMenu;
-  }
 
-  buscarClick() {
-    // Implementar búsqueda
-    console.log('Search clicked');
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   logout() {
-    this.showUserMenu = false;
-    this.router.navigate(['/']);
+    this.showUserMenu.set(false);
+    this.authService.logout();
+  }
+
+  toggleUserMenu() {
+    this.showUserMenu.update(v => !v);
+  }
+
+  onFocus() {
+    console.log('Focus detectado');
+    this.showResults.set(true);
   }
 }

@@ -9,7 +9,7 @@ import { LibroDetalleComponent } from '../../components/libro-detalle/libro-deta
 
 @Component({
   selector: 'app-home-usuario',
-  standalone: true, // Asegúrate de que sea standalone si no usas módulos
+  standalone: true,
   imports: [CommonModule, FormsModule, LibroDetalleComponent, LibroCardComponent],
   templateUrl: './home-usuario.component.html',
   styleUrl: './home-usuario.component.scss',
@@ -22,8 +22,8 @@ export class HomeUsuarioComponent implements OnInit {
   bibliotecaData = signal<any>(null);
 
   constructor(
-    private BibliotecaService: BibliotecaService, // Para los datos de BD
-    public LibroService: LibroService,      // Público para usarlo en el HTML
+    private BibliotecaService: BibliotecaService,
+    public LibroService: LibroService,
     public authService: AuthService
   ) { }
 
@@ -35,23 +35,21 @@ export class HomeUsuarioComponent implements OnInit {
     console.log('1. Llamando al servicio...');
     this.BibliotecaService.getBibliotecaUsuario().subscribe({
       next: (res) => {
-        console.log('2. Respuesta recibida:', res); // Si llegas aquí, el interceptor está bien
+        // Con el interceptor, 'res' ya es directamente el array de libros
+        console.log('Datos "limpios" recibidos:', res);
 
-        // Quitamos el res.ok y probamos con lo que venga
-        const data = res.data || res;
-        this.bibliotecaData.set(data);
-
-        console.log('3. Signal actualizado con:', this.bibliotecaData());
+        // Seteamos el signal directamente
+        this.bibliotecaData.set(res || []);
       },
       error: (err) => {
-        console.error('❌ Error en la suscripción:', err);
+        console.error('Error cargando la biblioteca:', err);
       }
     });
   }
   // Filtrado reactivo
   filteredBooks = computed(() => {
-    // Accedemos a la propiedad 'libros' que viene de tu relación with('libros') de Laravel
-    const libros = this.bibliotecaData()?.libros || [];
+    // Accedo a la propiedad 'libros'
+    const libros = this.bibliotecaData();
     const filter = this.currentFilter();
     const query = this.searchQuery().toLowerCase();
 
@@ -72,11 +70,11 @@ export class HomeUsuarioComponent implements OnInit {
 
   openBookDetail(libro: any) {
     // Al seleccionar el libro, el Signal en LibroService se actualiza y el modal se abre
-    this.LibroService.selectBook(libro);
+    this.LibroService.libroSeleccionado(libro);
   }
 
+  //Para cualquier cambio
   onLibraryChanged() {
-    // Si el hijo (detalle) avisa de un cambio (borrado o cambio de estado), recargamos
     this.loadLibrary();
   }
 }

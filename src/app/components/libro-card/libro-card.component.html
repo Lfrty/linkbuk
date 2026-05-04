@@ -2,9 +2,9 @@
 
   <!-- Contenedor de Portada -->
   <div class="relative aspect-[2/3] rounded-xl overflow-hidden shadow-md group-hover:shadow-2xl">
-    <img [src]="libro.portada" [alt]="libro.titulo"
+    <img [src]="libro.portada || '/assets/img/no-cover.jpg'"
+      (error)="$any($event.target).src = ''; $any($event.target).style.display = 'none'" [alt]="libro.titulo"
       class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-
     <!-- Overlay al hacer Hover -->
     <div
       class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 text-white">

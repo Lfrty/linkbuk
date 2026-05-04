@@ -18,4 +18,9 @@ export const API = {
         search: `${environment.apiUrl}/libros/search`,
         detalle: `${environment.apiUrl}/libros/detalle`,
     },
+
+    listas: {
+        listar: `${environment.apiUrl}/listas/all`,
+        crear: `${environment.apiUrl}/listas/new`,
+    },
 };

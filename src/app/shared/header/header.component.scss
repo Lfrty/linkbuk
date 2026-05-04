@@ -1,0 +1,19 @@
+.custom-scrollbar {
+    &::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: hsl(var(--muted));
+        border-radius: 10px;
+    }
+}
+
+// Animación de entrada suave
+.animate-in {
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}

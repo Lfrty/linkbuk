@@ -36,10 +36,7 @@ export class BibliotecaService {
 
   // Obtener la biblioteca completa del usuario logueado
   getBibliotecaUsuario(): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = { 'Authorization': `Bearer ${token}` };
-
-    return this.http.get(API.biblioteca.listar, { headers });
+    return this.http.get(API.biblioteca.listar);
   }
 
   // Actualizar o añadir un libro con un estado (leyendo, leido, pendiente)

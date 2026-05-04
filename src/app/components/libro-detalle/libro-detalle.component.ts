@@ -1,6 +1,7 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Libro } from '../../models/Libro.model';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-libro-detalle',
@@ -9,16 +10,26 @@ import { Libro } from '../../models/Libro.model';
   templateUrl: './libro-detalle.component.html'
 })
 export class LibroDetalleComponent {
+  public authService = inject(AuthService);
+
   @Input({ required: true }) libro!: Libro | null;
   @Output() cerrar = new EventEmitter<void>();
+  @Output() actualizarEstado = new EventEmitter<{ libroId: number, nuevoEstado: string }>();
 
-  // Emitimos el cambio para que el componente padre lo guarde en la BD
-  @Output() actualizarEstado = new EventEmitter<{ work_key: string, nuevoEstado: 'pendiente' | 'leyendo' | 'leido' }>();
+  // evento para lanzar modal de registro
+  @Output() solicitarRegistro = new EventEmitter<void>();
+
+  openRegistro() {
+    this.solicitarRegistro.emit();
+  }
 
   cambiarEstado(nuevo: 'pendiente' | 'leyendo' | 'leido') {
-    if (this.libro) {
+
+    console.log("Lando petición desde libro-detalle");
+    if (this.libro && this.libro.id) {
+
       this.actualizarEstado.emit({
-        work_key: this.libro.work_key,
+        libroId: this.libro.id,
         nuevoEstado: nuevo
       });
     }

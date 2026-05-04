@@ -10,12 +10,13 @@
                     Descubre, organiza y comparte tus lecturas favoritas con LinkBuk
                 </p>
                 <button
-                    class="px-8 py-3 bg-primary text-primary-foreground rounded-lg text-lg hover:bg-primary/90 transition-colors">
+                    class="px-8 py-3 bg-primary text-primary-foreground rounded-lg text-lg hover:bg-primary/90 transition-colors"
+                    (click)="openAuth('registro')">
                     Comenzar Ahora
                 </button>
                 <button
                     class="px-8 py-3 bg-primary text-primary-foreground rounded-lg text-lg hover:bg-primary/90 transition-colors"
-                    (click)="openUserModal()">
+                    (click)="openAuth('login')">
                     Iniciar sesión
                 </button>
             </div>
@@ -59,7 +60,7 @@
                 <p class="text-muted-foreground mb-8">
                     Únete a miles de lectores en LinkBuk
                 </p>
-                <button class="">
+                <button class="" (click)="openAuth('registro')">
                     Crear Cuenta Gratis
                 </button>
             </div>
@@ -67,5 +68,6 @@
     </main>
 </div>
 @if (showLogin) {
-<app-auth (close)="closeUserModal()"></app-auth>
+<app-auth [initialMode]="modoInicial" (close)="closeUserModal()">
+</app-auth>
 }

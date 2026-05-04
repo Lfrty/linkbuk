@@ -2,4 +2,15 @@
 
 <router-outlet />
 
+@if (libroService.signalLibroSeleccionado()) {
+<app-libro-detalle [libro]="libroService.signalLibroSeleccionado()" (cerrar)="libroService.limpiarLibroSeleccionado()"
+  (actualizarEstado)="manejarCambioEstado($event)" (solicitarRegistro)="abrirRegistro()">
+</app-libro-detalle>
+}
+
+@if (mostrarAuth()) {
+<app-auth [initialMode]="modoInicialAuth()" (close)="mostrarAuth.set(false)">
+</app-auth>
+}
+
 <app-footer></app-footer>

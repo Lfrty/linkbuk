@@ -7,16 +7,8 @@
                 Hola, {{ authService.usuarioActual().nombre }} 👋
             </h2>
             <p class="text-muted-foreground text-lg italic">
-                "Tu biblioteca es tu paraíso personal"
+                "Un libro es un regalo que puedes abrir una y otra vez"
             </p>
-        </div>
-
-        <!-- Buscador -->
-        <div class="relative w-full md:w-80">
-            <input type="text" (input)="searchQuery.set($any($event.target).value)"
-                placeholder="Buscar por título o autor..."
-                class="w-full pl-10 pr-4 py-2.5 border rounded-2xl bg-card focus:ring-2 focus:ring-primary outline-none transition-all">
-            <span class="absolute left-3 top-3 text-muted-foreground">🔍</span>
         </div>
     </div>
 
@@ -32,7 +24,7 @@
     </div>
 
     <!-- Rejilla de Libros -->
-    @if (bibliotecaData()?.libros?.length > 0) {
+    @if (bibliotecaData()?.length > 0) {
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
         @for (libro of filteredBooks(); track libro.id) {
         <div class="group relative">
@@ -42,7 +34,7 @@
             <!-- Badge de estado rápido -->
             <span
                 class="absolute top-2 right-2 px-2 py-1 rounded-md text-[10px] font-bold uppercase bg-black/60 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                {{ libro.pivot?.estado_lectura }}
+                {{ libro.pivot?.estado_lectura || 'pendiente' }}
             </span>
         </div>
         }
@@ -62,17 +54,13 @@
         <p class="text-muted-foreground mb-10 max-w-md mx-auto text-lg">
             Parece que aún no has añadido ningún libro. ¡Explora el catálogo y empieza tu aventura literaria!
         </p>
-        <button
-            class="px-10 py-4 bg-primary text-primary-foreground rounded-2xl font-black text-lg hover:shadow-[0_0_20px_rgba(var(--primary),0.4)] transition-all active:scale-95">
-            🔍 BUSCAR LIBROS AHORA
-        </button>
     </div>
     }
 
     <!-- Modal de Detalle (el "Global Handler" de errores de Laravel nos protege aquí) -->
-    @if (LibroService.selectedBook()) {
-    <app-libro-detalle [libro]="LibroService.selectedBook()!" (closeDialog)="LibroService.clearSelectedBook()"
-        (changed)="onLibraryChanged()">
+    @if (LibroService.signalLibroSeleccionado()) {
+    <app-libro-detalle [libro]="LibroService.signalLibroSeleccionado()!"
+        (cerrar)="LibroService.limpiarLibroSeleccionado()" (actualizarEstado)="onLibraryChanged()">
     </app-libro-detalle>
     }
 </main>

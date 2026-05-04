@@ -1,22 +1,22 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { Router } from '@angular/router';
 
-// Definimos los modos posibles para mayor claridad
-type AuthMode = 'login' | 'register';
+export type AuthMode = 'login' | 'registro';
 
 @Component({
-  selector: 'app-auth', // Actualizado de app-login a app-auth
+  selector: 'app-auth',
   standalone: true,
   imports: [FormsModule],
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.scss',
 })
+
 export class AuthComponent {
   @Output() close = new EventEmitter<void>();
+  @Input() initialMode: AuthMode = 'login';
 
-  // Usamos el tipo AuthMode para que el código sea más descriptivo
   mode: AuthMode = 'login';
 
   // Propiedades del formulario
@@ -24,20 +24,25 @@ export class AuthComponent {
   email = '';
   password = '';
 
-  // Helper para el HTML (así no tienes que cambiar todo el isLogin del template)
+
   get isLogin(): boolean {
     return this.mode === 'login';
   }
 
   constructor(private authService: AuthService, private router: Router) { }
 
+  ngOnInit() {
+    this.mode = this.initialMode;
+  }
+
   onClose(): void {
+    console.log("Onclose emitido");
     this.close.emit();
   }
 
   toggleMode(): void {
-    this.mode = this.isLogin ? 'register' : 'login';
-    // Limpiamos los campos al cambiar para evitar que el password se quede ahí
+    this.mode = this.isLogin ? 'registro' : 'login';
+    // Limpieza de campo al cambiar de modo
     this.password = '';
   }
 
