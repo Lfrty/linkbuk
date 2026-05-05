@@ -1,32 +1,73 @@
-<div class="container mt-4">
-    <div class="row">
-        <!-- 🔄 Iteramos sobre cada lista -->
-        <div class="col-md-4 mb-4" *ngFor="let lista of listas">
-            <div class="card h-100 shadow-sm border-0">
+<div class="p-6 bg-gray-50 min-h-screen">
+    <!-- Header Sencillo -->
+    <div class="max-w-7xl mx-auto mb-8 flex justify-between items-center">
+        <h2 class="text-2xl font-bold text-gray-800">Mis Listas</h2>
+        <button (click)="abrirModalCrear()"
+            class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+            + Nueva Lista
+        </button>
+    </div>
 
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h5 class="card-title m-0 text-primary">{{ lista.nombre }}</h5>
-                        <!-- 🏷️ Distintivo para listas automáticas -->
-                        <span *ngIf="lista.es_default" class="badge rounded-pill bg-light text-dark border">
-                            Predeterminada
-                        </span>
+    <!-- Grid de Listas -->
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 max-w-7xl mx-auto">
+        @for (lista of listaService.listas(); track lista.id) {
+        <div class="relative group cursor-pointer transition-all duration-300 hover:-translate-y-1">
+
+            <!-- Contenedor de Portada (Estilo igual al de tus libros) -->
+            <div (click)="verDetalle(lista)"
+                class="relative aspect-[2/3] rounded-xl overflow-hidden shadow-md group-hover:shadow-xl bg-gray-200">
+
+                <!-- Stack de mini-portadas o imagen por defecto -->
+                @if (lista.libros && lista.libros.length > 0) {
+                <img [src]="lista.libros[0].portada || 'assets/img/no-list-cover.jpg'"
+                    (error)="$any($event.target).src = 'assets/img/no-list-cover.jpg'"
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                }
+                <!-- Badge Sistema -->
+                @if (lista.es_default) {
+                <span
+                    class="absolute top-2 left-2 bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm uppercase">Sistema</span>
+                }
+
+                <!-- Overlay con Acciones y Datos -->
+                <div
+                    class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3 text-white">
+                    <div class="flex justify-between items-center">
+                        <div class="flex gap-2">
+                            <button (click)="editarLista(lista, $event)"
+                                class="p-1.5 bg-white/20 hover:bg-white/40 rounded-lg transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg>
+                            </button>
+                            @if (!lista.es_default) {
+                            <button (click)="eliminarLista(lista.id, $event)"
+                                class="p-1.5 bg-red-500/50 hover:bg-red-500/80 rounded-lg transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                            }
+                        </div>
                     </div>
-                    <p class="card-text text-muted small">
-                        {{ lista.descripcion || 'Sin descripción disponible.' }}
-                    </p>
                 </div>
+            </div>
 
-                <div class="card-footer bg-transparent border-0 d-flex justify-content-end pb-3">
-                    <button class="btn btn-sm btn-outline-primary me-2">Ver libros 📖</button>
-
-                    <!-- 🗑️ Botón de borrar con lógica de seguridad -->
-                    <button *ngIf="!lista.es_default" class="btn btn-sm btn-outline-danger" (click)="borrar(lista.id)">
-                        Eliminar
-                    </button>
-                </div>
-
+            <!-- Texto debajo de la tarjeta -->
+            <div class="mt-2 px-1">
+                <h3 class="font-bold text-sm text-gray-800 truncate leading-tight">{{ lista.nombre }}</h3>
+                <p class="text-xs text-gray-500 font-medium">{{ lista.libros_count || 0 }} libros</p>
             </div>
         </div>
+        }
     </div>
 </div>
+<!-- ... El resto del código del grid igual ... -->
+
+<!-- Reemplazamos el modal antiguo por el componente -->
+@if (mostrarModal) {
+<app-modal-lista [lista]="listaParaEditar()" (closed)="onModalClose()">
+</app-modal-lista>
+}

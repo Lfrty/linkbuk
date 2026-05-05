@@ -2,19 +2,17 @@
     <div class="container mx-auto px-4">
         <div class="flex h-16 items-center justify-between gap-6">
 
-            <!-- SECCIÓN IZQUIERDA: Logo y Navegación 🧭 -->
             <div class="flex items-center gap-8">
-                <!-- Logo (puedes poner aquí tu img o texto) -->
                 <a routerLink="/" class="font-bold text-xl tracking-tight text-primary">Linkbuk 📚</a>
 
                 <!-- Enlaces de navegación -->
                 <nav class="hidden lg:flex items-center gap-6">
                     <a routerLink="/homeusuario"
                         class="text-sm font-medium hover:text-primary transition-colors">Inicio</a>
+                    @if (authService.usuarioActual()) {
                     <a routerLink="/listas" class="text-sm font-medium hover:text-primary transition-colors">Mis
                         Listas</a>
-                    <a routerLink="/mis-resenas" class="text-sm font-medium hover:text-primary transition-colors">Mis
-                        Reseñas</a>
+                    }
                 </nav>
             </div>
 
@@ -22,7 +20,7 @@
 
                 <!-- Buscador compacto (max-w-xs para que sea pequeño) -->
                 <app-buscador></app-buscador>
-
+                @if (authService.usuarioActual()) {
                 <!-- Menú Usuario -->
                 <div class="relative">
                     <button (click)="toggleUserMenu()"
@@ -35,7 +33,8 @@
 
                     @if (showUserMenu()) {
                     <div class="absolute right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg py-2">
-                        <a routerLink="/profile" class="block px-4 py-2 hover:bg-muted transition-colors">Perfil</a>
+                        <a routerLink="/perfil" (click)="showUserMenu.set(false)"
+                            class="block px-4 py-2 hover:bg-muted transition-colors">Perfil</a>
                         <hr class="my-2 border-border">
                         <button (click)="logout()"
                             class="w-full text-left px-4 py-2 hover:bg-muted transition-colors text-destructive">
@@ -46,6 +45,22 @@
                     <div class="fixed inset-0 z-[-1]" (click)="showUserMenu.set(false)"></div>
                     }
                 </div>
+                }@else {
+                <!-- MOSTRAR SI NO ESTÁ LOGUEADO: Botones de Auth -->
+                <div class="flex items-center">
+                    <!-- Iniciar Sesión (Estilo Secundario/Ghost) -->
+                    <button (click)="openLogin()"
+                        class="w-full px-4 py-2.5 text-sm font-semibold text-primary border-2 border-transparent hover:border-primary/10 hover:bg-primary/5 rounded-xl transition-all active:scale-95">
+                        Iniciar sesión
+                    </button>
+
+                    <!-- Crear Cuenta (Estilo Primario/Sólido) -->
+                    <button (click)="openRegistro()"
+                        class=" px-8 py-1.5 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 hover:-translate-y-0.5 transition-all active:scale-95">
+                        Crear cuenta
+                    </button>
+                </div>
+                }
             </div>
 
         </div>

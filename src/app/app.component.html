@@ -1,10 +1,11 @@
-<app-header></app-header>
+<app-header (solicitarRegistro)="abrirRegistro()" (solicitarLogin)="abrirLogin()"></app-header>
 
 <router-outlet />
 
 @if (libroService.signalLibroSeleccionado()) {
-<app-libro-detalle [libro]="libroService.signalLibroSeleccionado()" (cerrar)="libroService.limpiarLibroSeleccionado()"
-  (actualizarEstado)="manejarCambioEstado($event)" (solicitarRegistro)="abrirRegistro()">
+<app-libro-detalle [libro]="libroService.signalLibroSeleccionado()" [estaLogueado]="authService.estaLogueado()"
+  (cerrar)="libroService.limpiarLibroSeleccionado()" (actualizarEstado)="manejarCambioEstado($event)"
+  (solicitarRegistro)="abrirRegistro()">
 </app-libro-detalle>
 }
 

@@ -29,6 +29,7 @@ export class BuscadorComponent implements OnInit, OnDestroy {
     ).subscribe(async (query) => {
       if (query.length >= 3) {
         const libros = await this.libroService.buscarLibros(query);
+        console.log(libros);
         this.results.set(libros);
         this.showResults.set(true);
       } else {
@@ -50,7 +51,7 @@ export class BuscadorComponent implements OnInit, OnDestroy {
     // 💡 Aquí es donde ocurre el cambio:
     // Llamaremos al método que crearemos en LibroService para obtener el ID de Laravel
     await this.libroService.obtenerDetalleLibro(libro.work_key);
-    
+
     this.showResults.set(false);
     this.searchQuery.set('');
   }

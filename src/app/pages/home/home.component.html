@@ -1,73 +1,68 @@
-<div class="min-h-screen bg-background">
-    <main>
-        <!-- Hero -->
-        <section class="py-20 text-center">
-            <div class="container mx-auto px-4">
-                <h1 class="text-5xl font-bold mb-6">
-                    Tu biblioteca personal de libros
-                </h1>
-                <p class="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-                    Descubre, organiza y comparte tus lecturas favoritas con LinkBuk
-                </p>
-                <button
-                    class="px-8 py-3 bg-primary text-primary-foreground rounded-lg text-lg hover:bg-primary/90 transition-colors"
-                    (click)="openAuth('registro')">
-                    Comenzar Ahora
-                </button>
-                <button
-                    class="px-8 py-3 bg-primary text-primary-foreground rounded-lg text-lg hover:bg-primary/90 transition-colors"
-                    (click)="openAuth('login')">
-                    Iniciar sesión
-                </button>
-            </div>
-        </section>
+<main class="container mx-auto px-4 py-8">
 
-        <!-- Features -->
-        <section class="py-16 bg-card">
-            <div class="container mx-auto px-4">
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div class="text-center p-6">
-                        <div class="text-4xl mb-4">⭐</div>
-                        <h3 class="text-xl font-semibold mb-2">Califica y Reseña</h3>
-                        <p class="text-muted-foreground">
-                            Comparte tu opinión y descubre qué piensan otros lectores
-                        </p>
-                    </div>
-                    <div class="text-center p-6">
-                        <div class="text-4xl mb-4">📖</div>
-                        <h3 class="text-xl font-semibold mb-2">Organiza tu Lectura</h3>
-                        <p class="text-muted-foreground">
-                            Crea listas personalizadas y lleva control de tus libros
-                        </p>
-                    </div>
-                    <div class="text-center p-6">
-                        <div class="text-4xl mb-4">💬</div>
-                        <h3 class="text-xl font-semibold mb-2">Conecta con Lectores</h3>
-                        <p class="text-muted-foreground">
-                            Únete a una comunidad apasionada por la lectura
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+            <h2 class="text-4xl font-bold mb-2">
+                Hola, {{ authService.usuarioActual().nombre }} 👋
+            </h2>
+            <p class="text-muted-foreground text-lg italic">
+                "Un libro es un regalo que puedes abrir una y otra vez"
+            </p>
+        </div>
+    </div>
 
-        <!-- CTA -->
-        <section class="py-20 text-center">
-            <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold mb-4">
-                    ¿Listo para empezar?
-                </h2>
-                <p class="text-muted-foreground mb-8">
-                    Únete a miles de lectores en LinkBuk
-                </p>
-                <button class="" (click)="openAuth('registro')">
-                    Crear Cuenta Gratis
-                </button>
-            </div>
-        </section>
-    </main>
-</div>
-@if (showLogin) {
-<app-auth [initialMode]="modoInicial" (close)="closeUserModal()">
-</app-auth>
-}
+    <!-- Tabs de Filtro -->
+    <div class="mb-8 flex flex-wrap gap-2">
+        @for (f of ['todos', 'leyendo', 'leido', 'pendiente']; track f) {
+        <button (click)="setFilter(f)" [class.bg-primary]="currentFilter() === f"
+            [class.text-primary-foreground]="currentFilter() === f" [class.bg-muted]="currentFilter() !== f"
+            class="px-6 py-2 rounded-xl text-sm font-semibold capitalize transition-all hover:scale-105">
+            {{ f }}
+        </button>
+        }
+    </div>
+
+    <!-- Rejilla de Libros -->
+    @if (bibliotecaService.libros().length > 0) {
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+        @for (libro of filteredBooks(); track libro.id) {
+        <div class="group relative">
+            <app-libro-card [libro]="libro" (cardClick)="verDetallesLibro(libro)" class="cursor-pointer">
+            </app-libro-card>
+
+            <!-- Badge de estado rápido -->
+            <span
+                class="absolute top-2 right-2 px-2 py-1 rounded-md text-[10px] font-bold uppercase bg-black/60 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                {{ libro.pivot?.estado_lectura || 'pendiente' }}
+            </span>
+        </div>
+        }
+    </div>
+
+    @if (filteredBooks().length === 0) {
+    <div class="text-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed border-border">
+        <p class="text-muted-foreground text-lg">No hay libros con el estado: <b>{{ currentFilter() }}</b></p>
+    </div>
+    }
+
+    } @else {
+    <!-- Vista vacía -->
+    <div class="text-center py-24 bg-card rounded-[3rem] border-2 border-dashed border-primary/20 shadow-inner">
+        <div class="text-7xl mb-6">🏜️</div>
+        <h3 class="text-3xl font-bold mb-3 text-foreground">Tu biblioteca está desierta</h3>
+        <p class="text-muted-foreground mb-10 max-w-md mx-auto text-lg">
+            Parece que aún no has añadido ningún libro. ¡Explora el catálogo y empieza tu aventura literaria!
+        </p>
+    </div>
+    }
+
+    <!-- Modal de Detalle (el "Global Handler" de errores de Laravel nos protege aquí) -->
+    @if (bibliotecaService.libros().length>0) {
+    @if (libroService.signalLibroSeleccionado()){
+    <app-libro-detalle [libro]="libroService.signalLibroSeleccionado()!" [estaLogueado]="authService.estaLogueado()"
+        (cerrar)="libroService.limpiarLibroSeleccionado()" (actualizarEstado)="manejarCambioEstado($event)">
+    </app-libro-detalle>
+    }
+    }
+</main>

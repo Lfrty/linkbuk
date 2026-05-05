@@ -1,37 +1,54 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { ListaService } from '../../core/services/lista.service';
+import { ModalListaComponent } from '../modal-lista/modal-lista.component'; 
+import { Lista } from '../../models/Lista.model';
 
 @Component({
   selector: 'app-listas',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, ModalListaComponent],
   templateUrl: './listas.component.html',
-  styleUrl: './listas.component.scss',
 })
 export class ListasComponent implements OnInit {
-  listas: any[] = [];
+  listaService = inject(ListaService);
+  private router = inject(Router);
 
-  constructor(private listaService: ListaService) { }
+  mostrarModal = false;
+  listaParaEditar = signal<Lista | null>(null);
 
   ngOnInit(): void {
-    this.cargarListas();
+    this.listaService.getListas();
   }
 
-  cargarListas() {
-    this.listaService.getListas().subscribe(response => {
-      this.listas = response.data;
-    });
+  verDetalle(lista: Lista) {
+    this.listaParaEditar.set(lista);
+    this.mostrarModal = true;
   }
 
-  borrar(id: number) {
-    this.listaService.eliminarLista(id).subscribe({
-      next: () => {
-        // Actualizamos la lista localmente para que desaparezca de la vista
-        this.listas = this.listas.filter(l => l.id !== id);
-      },
-      error: (err) => {
-        console.error('Error al borrar:', err.error.message);
-        // Aquí podrías mostrar una alerta al usuario
-      }
-    });
+  abrirModalCrear() {
+    this.listaParaEditar.set(null);
+    this.mostrarModal = true;
+  }
+
+  editarLista(lista: Lista, event: Event) {
+    event.stopPropagation();
+    this.listaParaEditar.set(lista);
+    this.mostrarModal = true;
+  }
+
+  eliminarLista(id: number, event: Event) {
+    event.stopPropagation();
+    if (confirm('¿Seguro que quieres borrar esta lista?')) {
+      this.listaService.eliminarLista(id).subscribe(() => {
+        this.listaService.getListas();
+      });
+    }
+  }
+
+  onModalClose() {
+    this.mostrarModal = false;
+    this.listaParaEditar.set(null);
   }
 }

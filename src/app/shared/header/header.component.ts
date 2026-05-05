@@ -1,7 +1,7 @@
-import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, signal, inject, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 import { LibroService } from '../../core/services/libro.service';
 import { AuthService } from '../../core/services/auth.service';
 import { BuscadorComponent } from '../../buscador/buscador.component';
@@ -18,7 +18,9 @@ export class Header implements OnDestroy {
   public libroService = inject(LibroService);
   public authService = inject(AuthService);
 
-  private searchSubject = new Subject<string>();
+  @Output() solicitarRegistro = new EventEmitter<void>();
+  @Output() solicitarLogin = new EventEmitter<void>();
+
   private destroy$ = new Subject<void>();
 
   searchQuery = signal<string>('');
@@ -44,5 +46,13 @@ export class Header implements OnDestroy {
   onFocus() {
     console.log('Focus detectado');
     this.showResults.set(true);
+  }
+
+  openRegistro() {
+    this.solicitarRegistro.emit();
+  }
+
+  openLogin() {
+    this.solicitarLogin.emit();
   }
 }

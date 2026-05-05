@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Output, Input } from '@angular/core';
+import { Component, EventEmitter, Output, Input, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 export type AuthMode = 'login' | 'registro';
 
@@ -12,8 +12,12 @@ export type AuthMode = 'login' | 'registro';
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.scss',
 })
+export class AuthComponent implements OnInit {
+  // Inyección moderna
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
-export class AuthComponent {
   @Output() close = new EventEmitter<void>();
   @Input() initialMode: AuthMode = 'login';
 
@@ -24,32 +28,26 @@ export class AuthComponent {
   email = '';
   password = '';
 
+  ngOnInit() {
+    const routeMode = this.route.snapshot.data['initialMode'] as AuthMode | undefined;
+    this.mode = routeMode ?? this.initialMode;
+  }
 
   get isLogin(): boolean {
     return this.mode === 'login';
   }
 
-  constructor(private authService: AuthService, private router: Router) { }
-
-  ngOnInit() {
-    this.mode = this.initialMode;
-  }
-
   onClose(): void {
-    console.log("Onclose emitido");
     this.close.emit();
   }
 
   toggleMode(): void {
     this.mode = this.isLogin ? 'registro' : 'login';
-    // Limpieza de campo al cambiar de modo
     this.password = '';
   }
 
   handleSubmit(): void {
-    // Validación básica antes de enviar
-    if (!this.email || !this.password || !this.isLogin && !this.nombre) {
-      console.warn('Formulario incompleto');
+    if (!this.email || !this.password || (!this.isLogin && !this.nombre)) {
       return;
     }
 
@@ -61,20 +59,30 @@ export class AuthComponent {
   }
 
   private login(): void {
-    this.authService.login(this.email, this.password).subscribe({
-      next: (response) => {
-        console.log('Login exitoso');
+    // Enviamos el objeto con las claves que espera el backend
+    const credenciales = { email: this.email, password: this.password };
+
+    this.authService.login(credenciales).subscribe({
+      next: () => {
         this.onClose();
+        // Redirige la ruta
         this.router.navigate(['/home']);
       },
-      error: (err) => console.error('Error en login:', err)
+      error: (err) => {
+        console.error('Error en login:', err);
+      }
     });
   }
 
   private register(): void {
-    this.authService.register(this.nombre, this.email, this.password).subscribe({
-      next: (response) => {
-        console.log('Registro exitoso');
+    const datos = {
+      nombre: this.nombre,
+      email: this.email,
+      password: this.password
+    };
+
+    this.authService.registro(datos).subscribe({
+      next: () => {
         this.onClose();
         this.router.navigate(['/home']);
       },

@@ -3,7 +3,7 @@
   <!-- Contenedor de Portada -->
   <div class="relative aspect-[2/3] rounded-xl overflow-hidden shadow-md group-hover:shadow-2xl">
     <img [src]="libro.portada || '/assets/img/no-cover.jpg'"
-      (error)="$any($event.target).src = ''; $any($event.target).style.display = 'none'" [alt]="libro.titulo"
+      (error)="$any($event.target).src = 'assets/img/no-cover.jpg'" [alt]="libro.titulo"
       class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
     <!-- Overlay al hacer Hover -->
     <div

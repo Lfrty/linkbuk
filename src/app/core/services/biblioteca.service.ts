@@ -1,13 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, map, catchError } from 'rxjs';
+import { Observable, of, map, catchError, tap } from 'rxjs';
 import { Libro } from '../../models/Libro.model';
 import { API } from '../config/api';
+import { resolverPortada } from '../utils/libro-utils';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BibliotecaService {
+  private _libros = signal<any[]>([]);
+  public libros = computed(() => this._libros());
 
   constructor(private http: HttpClient) { }
 
@@ -31,20 +34,33 @@ export class BibliotecaService {
   }
 
   /**
-   * GESTIÓN DE BIBLIOTECA (Tu API Laravel)
+   * GESTIÓN DE BIBLIOTECA 
    */
 
   // Obtener la biblioteca completa del usuario logueado
-  getBibliotecaUsuario(): Observable<any> {
-    return this.http.get(API.biblioteca.listar);
+  getBibliotecaUsuario() {
+    return this.http.get<any>(API.biblioteca.listar).subscribe({
+      next: (res) => {
+        const librosProcesados = (res.data || []).map((libro: any) => ({
+          ...libro,
+          portada: resolverPortada(libro.portada)
+        }));
+
+        this._libros.set(librosProcesados);
+      },
+      error: (err) => console.error(err)
+    });
   }
 
-  // Actualizar o añadir un libro con un estado (leyendo, leido, pendiente)
-  updateEstadoLibro(libroId: number, estado: string, fechaFin?: Date): Observable<any> {
-    return this.http.post(API.biblioteca.estadoLibro + `/${libroId}`, {
+  // Actualizar o añadir un libro con un estado
+  addLibro(libroId: number, estado: string, fechaFin?: Date): Observable<any> {
+    return this.http.post(API.biblioteca.estadoLibro, {
+      libro_id: libroId,
       estado_lectura: estado,
       fecha_finalizacion: fechaFin
-    });
+    }).pipe(
+      tap(() => this.getBibliotecaUsuario()) // <--- TRUCO: Refresca la lista automáticamente tras éxito
+    );
   }
 
   // Eliminar un libro de la biblioteca personal

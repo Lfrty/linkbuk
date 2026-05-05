@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { Libro } from '../../models/Libro.model';
 import { API } from '../config/api';
+import { resolverPortada } from '../utils/libro-utils';
 
 @Injectable({
   providedIn: 'root',
@@ -21,14 +22,16 @@ export class LibroService {
     try {
       const url = `${API.libro.search}?q=${encodeURIComponent(query)}`;
 
-      const libros = await firstValueFrom(this.http.get<Libro[]>(url));
+      const res = await firstValueFrom(this.http.get<any>(url));
 
-      console.log('Libros recibidos del interceptor:', libros);
+      console.log('Libros recibidos del interceptor empaquetados:', res);
 
-      if (Array.isArray(libros)) {
-        return libros.map(libro => ({
+      const listaLibros = res.data;
+
+      if (Array.isArray(listaLibros)) {
+        return listaLibros.map(libro => ({
           ...libro,
-          portada: this.resolverPortada(libro.portada)
+          portada: resolverPortada(libro.portada)
         }));
       }
 
@@ -50,31 +53,20 @@ export class LibroService {
       // Usamos firstValueFrom para manejar la petición como una Promesa
       console.log("LLamo a más detalles");
       const libro = await firstValueFrom(
-        this.http.get<Libro>(`${API.libro.detalle}/${cleanKey}`)
+        this.http.get<any>(`${API.libro.detalle}/${cleanKey}`)
       );
 
-      // Actualizamos la Signal con la información "oficial"
-      if (libro) {
-        this.libroSeleccionado(libro);
+      // Actualizo el signal con mayores detalles
+      if (libro.data) {
+        this.libroSeleccionado(libro.data);
       }
 
-      return libro;
+      return libro.data;
     } catch (error) {
       console.error('Error al obtener detalle de la API propia:', error);
       return null;
     }
   }
-
-  private resolverPortada(portada: string | undefined): string {
-    if (!portada) return '/assets/img/no-cover.jpg';
-
-    if (/^\d+$/.test(portada)) {
-      return `https://covers.openlibrary.org/b/id/${portada}-L.jpg`;
-    }
-
-    return portada;
-  }
-
 
   /**
    * MÉTODOS PARA EL MODAL
@@ -82,7 +74,7 @@ export class LibroService {
   libroSeleccionado(libro: Libro) {
     this.signalLibroSeleccionado.set({
       ...libro,
-      portada: this.resolverPortada(libro.portada)
+      portada: resolverPortada(libro.portada)
     });
   }
 

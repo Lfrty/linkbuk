@@ -1,0 +1,73 @@
+<div class="min-h-screen bg-background">
+    <main>
+        <!-- Hero -->
+        <section class="py-20 text-center">
+            <div class="container mx-auto px-4">
+                <h1 class="text-5xl font-bold mb-6">
+                    Tu biblioteca personal de libros
+                </h1>
+                <p class="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+                    Descubre, organiza y comparte tus lecturas favoritas con LinkBuk
+                </p>
+                <button
+                    class="px-8 py-3 bg-primary text-primary-foreground rounded-lg text-lg hover:bg-primary/90 transition-colors"
+                    (click)="openAuth('registro')">
+                    Comenzar Ahora
+                </button>
+                <button
+                    class="px-8 py-3 bg-primary text-primary-foreground rounded-lg text-lg hover:bg-primary/90 transition-colors"
+                    (click)="openAuth('login')">
+                    Iniciar sesión
+                </button>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="py-16 bg-card">
+            <div class="container mx-auto px-4">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="text-center p-6">
+                        <div class="text-4xl mb-4">⭐</div>
+                        <h3 class="text-xl font-semibold mb-2">Califica y Reseña</h3>
+                        <p class="text-muted-foreground">
+                            Comparte tu opinión y descubre qué piensan otros lectores
+                        </p>
+                    </div>
+                    <div class="text-center p-6">
+                        <div class="text-4xl mb-4">📖</div>
+                        <h3 class="text-xl font-semibold mb-2">Organiza tu Lectura</h3>
+                        <p class="text-muted-foreground">
+                            Crea listas personalizadas y lleva control de tus libros
+                        </p>
+                    </div>
+                    <div class="text-center p-6">
+                        <div class="text-4xl mb-4">💬</div>
+                        <h3 class="text-xl font-semibold mb-2">Conecta con Lectores</h3>
+                        <p class="text-muted-foreground">
+                            Únete a una comunidad apasionada por la lectura
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="py-20 text-center">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-4">
+                    ¿Listo para empezar?
+                </h2>
+                <p class="text-muted-foreground mb-8">
+                    Únete a miles de lectores en LinkBuk
+                </p>
+                <button class="" (click)="openAuth('registro')">
+                    Crear Cuenta Gratis
+                </button>
+            </div>
+        </section>
+    </main>
+</div>
+@if (showLogin) {
+<app-auth [initialMode]="modoInicial" (close)="closeUserModal()">
+</app-auth>
+}

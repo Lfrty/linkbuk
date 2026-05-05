@@ -1,16 +1,17 @@
 import { HttpInterceptorFn, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { map, catchError, throwError } from 'rxjs';
+import { AuthService } from '../app/core/services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const token = localStorage.getItem('token');
-    const router = inject(Router);
+    const authService = inject(AuthService);
 
     let request = req;
     if (token) {
+        const cleanToken = token.replace(/['"]+/g, '');
         request = req.clone({
-            setHeaders: { Authorization: `Bearer ${token}` }
+            setHeaders: { Authorization: `Bearer ${cleanToken}` }
         });
     }
 
@@ -21,7 +22,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             if (event instanceof HttpResponse && event.body) {
                 const body = event.body as any;
                 if (body && body.hasOwnProperty('data')) {
-                    return event.clone({ body: body.data });
+                    return event.clone({
+                        body: {
+                            data: body.data,
+                            message: body.message,
+                            status: body.status
+                        }
+                    });
                 }
             }
             return event;
@@ -29,13 +36,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         // Manejo de errores (handler)
         catchError((error: HttpErrorResponse) => {
             if (error.status === 401) {
-                console.warn('Sesión caducada o inválida. Redirige a Home');
-
-                // Limpiar el token caducado para que no estorbe
-                localStorage.removeItem('token');
-
-                //Redirige a home, por defecto vacío 
-                router.navigate(['/']);
+                console.warn('401 detectado: Token inválido o caducado');
             }
             return throwError(() => error);
         })

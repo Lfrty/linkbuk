@@ -1,0 +1,26 @@
+<div class="perfil-container">
+    <h2>Mi Perfil</h2>
+
+    <div class="form-group">
+        <label>Nombre</label>
+        <input [(ngModel)]="nombre" type="text" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label>Biografía</label>
+        <textarea [(ngModel)]="biografia" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Ubicación</label>
+        <input [(ngModel)]="ubicacion" type="text" class="form-control">
+    </div>
+
+    @if (mensaje()) {
+    <p class="alert success">{{ mensaje() }}</p>
+    }
+
+    <button (click)="guardarCambios()" [disabled]="cargando()">
+        {{ cargando() ? 'Guardando...' : 'Actualizar Perfil' }}
+    </button>
+</div>

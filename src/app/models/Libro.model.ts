@@ -10,8 +10,9 @@ export interface Libro {
 
   // Propiedad de API con detalles respecto al usuario
   pivot?: {
-    user_id: number;
-    libro_id: number;
-    estado_lectura: 'pendiente' | 'leyendo' | 'leido';
+    user_id?: number;
+    libro_id?: number;
+    estado_lectura: EstadoLectura;
   };
 }
+export type EstadoLectura = 'pendiente' | 'leyendo' | 'leido';
