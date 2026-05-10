@@ -1,7 +1,8 @@
 import { HttpInterceptorFn, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { map, catchError, throwError } from 'rxjs';
-import { AuthService } from '../app/core/services/auth.service';
+import { AuthService } from '../services/auth.service';
+import { ApiResponse } from '../../models/Api-response.model';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const token = localStorage.getItem('token');
@@ -20,16 +21,17 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         // Devuelve el objeto directamente 
         map(event => {
             if (event instanceof HttpResponse && event.body) {
-                const body = event.body as any;
-                if (body && body.hasOwnProperty('data')) {
-                    return event.clone({
-                        body: {
-                            data: body.data,
-                            message: body.message,
-                            status: body.status
-                        }
-                    });
-                }
+                const body = event.body as ApiResponse<any>;
+                const isNormalized = body && typeof body.ok !== 'undefined';
+
+                return event.clone({
+                    body: {
+                        ok: isNormalized ? body.ok : true,
+                        message: isNormalized ? body.message : 'Operación exitosa',
+                        data: isNormalized ? body.data : body,
+                        errors: isNormalized ? body.errors : null
+                    }
+                });
             }
             return event;
         }),

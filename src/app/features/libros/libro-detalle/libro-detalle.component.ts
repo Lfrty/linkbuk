@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Libro } from '../../models/Libro.model';
-import { ListaService } from '../../core/services/lista.service';
+import { Libro } from '../../../models/Libro.model';
+import { ListaService } from '../../../core/services/lista.service';
 
 @Component({
   selector: 'app-libro-detalle',
@@ -9,11 +9,26 @@ import { ListaService } from '../../core/services/lista.service';
   imports: [CommonModule],
   templateUrl: './libro-detalle.component.html'
 })
-export class LibroDetalleComponent implements OnInit{
+export class LibroDetalleComponent implements OnInit {
 
+  /**
+   * INPUTS
+   */
+  // Recibe los datos del Libro a mostrar
   @Input({ required: true }) libro!: Libro | null;
+
+  // Recibe una señal de si hay alguien logueado
   @Input() estaLogueado: boolean = false;
+
+
+  /**
+   * OUTPUTS
+   */
+
+  // Emite que se va a cerrar el modal
   @Output() cerrar = new EventEmitter<void>();
+
+  // Indica que se va a modificar el estado de un libro mostrado
   @Output() actualizarEstado = new EventEmitter<{ libroId: number, nuevoEstado: string }>();
 
   // Evento para lanzar modal de registro
@@ -21,8 +36,8 @@ export class LibroDetalleComponent implements OnInit{
 
   //Acceso a Listas
   public listaService = inject(ListaService);
-  
-  // Signal para trackear qué listas contienen este libro (optimistic update)
+
+  // Signal para trackear qué listas contienen
   private listasConLibro = signal<Set<number>>(new Set());
 
   ngOnInit() {

@@ -1,8 +1,8 @@
 import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
-import { LibroService } from '../core/services/libro.service';
-import { Libro } from '../models/Libro.model';
+import { LibroService } from '../../../core/services/libro.service';
+import { Libro } from '../../../models/Libro.model';
 
 @Component({
   selector: 'app-buscador',

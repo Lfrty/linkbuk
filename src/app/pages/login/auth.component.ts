@@ -2,13 +2,15 @@ import { Component, EventEmitter, Output, Input, OnInit, inject } from '@angular
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastService } from '../../core/services/toast-service';
+import { ErrorMensajeComponent } from '../../shared/components/error-mensaje/error-mensaje.component';
 
 export type AuthMode = 'login' | 'registro';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, ErrorMensajeComponent],
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.scss',
 })
@@ -17,16 +19,19 @@ export class AuthComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private toast = inject(ToastService);
 
   @Output() close = new EventEmitter<void>();
   @Input() initialMode: AuthMode = 'login';
 
   mode: AuthMode = 'login';
+  protected submitted = false;
 
-  // Propiedades del formulario
-  nombre = '';
-  email = '';
-  password = '';
+  protected registerData = {
+    nombre: '',
+    email: '',
+    password: ''
+  };
 
   ngOnInit() {
     const routeMode = this.route.snapshot.data['initialMode'] as AuthMode | undefined;
@@ -43,11 +48,13 @@ export class AuthComponent implements OnInit {
 
   toggleMode(): void {
     this.mode = this.isLogin ? 'registro' : 'login';
-    this.password = '';
+    this.submitted = false;
+    this.registerData = { nombre: '', email: '', password: '' };
   }
 
   handleSubmit(): void {
-    if (!this.email || !this.password || (!this.isLogin && !this.nombre)) {
+    if (!this.registerData.email || !this.registerData.password || (!this.isLogin && !this.registerData.nombre)) {
+      this.submitted = true;
       return;
     }
 
@@ -60,15 +67,20 @@ export class AuthComponent implements OnInit {
 
   private login(): void {
     // Enviamos el objeto con las claves que espera el backend
-    const credenciales = { email: this.email, password: this.password };
+    const credenciales = { email: this.registerData.email, password: this.registerData.password };
 
     this.authService.login(credenciales).subscribe({
       next: () => {
         this.onClose();
-        // Redirige la ruta
-        this.router.navigate(['/home']);
+        this.toast.mostrar('¡Bienvenido de nuevo! ☕', 'ok');
+        if (this.authService.sesion().esEspecial) {
+          this.router.navigate(['/admin/home']);
+        } else {
+          this.router.navigate(['/home']);
+        }
       },
       error: (err) => {
+        this.toast.mostrar('Credenciales incorrectas', 'error');
         console.error('Error en login:', err);
       }
     });
@@ -76,9 +88,9 @@ export class AuthComponent implements OnInit {
 
   private register(): void {
     const datos = {
-      nombre: this.nombre,
-      email: this.email,
-      password: this.password
+      nombre: this.registerData.nombre,
+      email: this.registerData.email,
+      password: this.registerData.password
     };
 
     this.authService.registro(datos).subscribe({

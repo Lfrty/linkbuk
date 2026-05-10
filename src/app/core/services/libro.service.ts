@@ -2,8 +2,8 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { Libro } from '../../models/Libro.model';
-import { API } from '../config/api';
-import { resolverPortada } from '../utils/libro-utils';
+import { API_URL } from '../constants/api_url';
+import { resolverPortada } from '../../shared/utils/libro-utils';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +20,7 @@ export class LibroService {
     if (!query.trim()) return [];
 
     try {
-      const url = `${API.libro.search}?q=${encodeURIComponent(query)}`;
+      const url = `${API_URL.libro.search}?q=${encodeURIComponent(query)}`;
 
       const res = await firstValueFrom(this.http.get<any>(url));
 
@@ -53,7 +53,7 @@ export class LibroService {
       // Usamos firstValueFrom para manejar la petición como una Promesa
       console.log("LLamo a más detalles");
       const libro = await firstValueFrom(
-        this.http.get<any>(`${API.libro.detalle}/${cleanKey}`)
+        this.http.get<any>(`${API_URL.libro.detalle}/${cleanKey}`)
       );
 
       // Actualizo el signal con mayores detalles

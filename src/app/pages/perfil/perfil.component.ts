@@ -1,42 +1,53 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Usuario } from '../../models/Usuario.model';
+import { UsuarioService } from '../../core/services/usuario.service';
+import { ErrorMensajeComponent } from '../../shared/components/error-mensaje/error-mensaje.component';
+import { ToastService } from '../../core/services/toast-service';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, ErrorMensajeComponent],
   templateUrl: './perfil.component.html'
 })
-export class PerfilComponent {
-  auth = inject(AuthService);
+export class PerfilComponent implements OnInit {
 
-  // Cargamos los datos actuales del signal de usuario
-  nombre = signal(this.auth.usuarioActual()?.nombre || '');
-  biografia = signal(this.auth.usuarioActual()?.biografia || '');
-  ubicacion = signal(this.auth.usuarioActual()?.ubicacion || '');
+  private usuarioService = inject(UsuarioService);
+  protected authService = inject(AuthService);
 
-  // Estado de la carga
-  cargando = signal(false);
-  mensaje = signal('');
+  public perfil: Usuario | undefined = undefined;
+  protected submitted = false;
 
-  guardarCambios() {
-    this.cargando.set(true);
-    const datosEditados = {
-      nombre: this.nombre(),
-      biografia: this.biografia(),
-      ubicacion: this.ubicacion()
-    };
+  @Input() isAdminMode: boolean = false; // Muestra campos de Admin
+  @Input() isEditMode: boolean = true;
+  @Output() save = new EventEmitter<Usuario>();
 
-    this.auth.updateProfile(datosEditados).subscribe({
-      next: () => {
-        this.mensaje.set('¡Perfil actualizado!');
-        this.cargando.set(false);
+  @Input() set perfilInput(value: any) {
+    if (value) {
+      this.perfil = value;
+    }
+  }
+
+  ngOnInit() {
+    if (!this.perfil) {
+      this.cargarMiPropioPerfil();
+    }
+  }
+
+  private cargarMiPropioPerfil() {
+    this.usuarioService.obtenerPerfil().subscribe({
+      next: (user) => {
+        if (!this.perfil) {
+          this.perfil = user.data;
+        }
       },
-      error: (err) => {
-        this.mensaje.set('Error al guardar los datos');
-        this.cargando.set(false);
-      }
+      error: (error) => console.log(error)
     });
+  }
+
+  handleSubmit() {
+    this.save.emit(this.perfil);
   }
 }

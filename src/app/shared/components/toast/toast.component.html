@@ -1,0 +1,13 @@
+@if (state.visible) {
+<div class="toad-container" [ngClass]="state.tipo">
+
+    <!-- Icono simple -->
+    <span class="text-2xl flex-shrink-0">
+        @if (state.tipo === 'ok') { ☕ }
+        @else if (state.tipo === 'error') { ⚠️ }
+        @else { ℹ️ }
+    </span>
+
+    <p class="font-medium m-0">{{ state.mensaje }}</p>
+</div>
+}

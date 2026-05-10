@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
 import { LibroService } from '../../core/services/libro.service';
 import { AuthService } from '../../core/services/auth.service';
-import { BuscadorComponent } from '../../buscador/buscador.component';
+import { BuscadorComponent } from '../../features/libros/buscador/buscador.component';
 import { Libro } from '../../models/Libro.model';
 
 @Component({
@@ -15,8 +15,8 @@ import { Libro } from '../../models/Libro.model';
   styleUrl: './header.component.scss',
 })
 export class Header implements OnDestroy {
-  public libroService = inject(LibroService);
-  public authService = inject(AuthService);
+  protected libroService = inject(LibroService);
+  protected authService = inject(AuthService);
 
   @Output() solicitarRegistro = new EventEmitter<void>();
   @Output() solicitarLogin = new EventEmitter<void>();
