@@ -4,7 +4,7 @@
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
             <h2 class="text-4xl font-bold mb-2">
-                Hola, {{ authService.usuarioActual().nombre }} 👋
+                Hola, {{ authService.sesion().nombre }} 👋
             </h2>
             <p class="text-muted-foreground text-lg italic">
                 "Un libro es un regalo que puedes abrir una y otra vez"
@@ -60,7 +60,7 @@
     <!-- Modal de Detalle (el "Global Handler" de errores de Laravel nos protege aquí) -->
     @if (bibliotecaService.libros().length>0) {
     @if (libroService.signalLibroSeleccionado()){
-    <app-libro-detalle [libro]="libroService.signalLibroSeleccionado()!" [estaLogueado]="authService.estaLogueado()"
+    <app-libro-detalle [libro]="libroService.signalLibroSeleccionado()!" [estaLogueado]="authService.sesion().estaLogueado"
         (cerrar)="libroService.limpiarLibroSeleccionado()" (actualizarEstado)="manejarCambioEstado($event)">
     </app-libro-detalle>
     }

@@ -5,6 +5,15 @@ module.exports = {
 
     theme: {
         extend: {
+            keyframes: {
+                'entrada-toad': {
+                    '0%': { transform: 'translateY(-100%)', opacity: '0' },
+                    '100%': { transform: 'translateY(0)', opacity: '1' },
+                }
+            },
+            animation: {
+                'toad-slide': 'entrada-toad 0.4s ease-out'
+            },
             colors: {
                 background: "var(--background)",
                 foreground: "var(--foreground)",

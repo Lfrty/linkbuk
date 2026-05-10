@@ -2,10 +2,10 @@ import { Routes } from '@angular/router';
 import { LandingComponent } from './pages/landing/landing.component';
 import { AuthComponent } from './pages/login/auth.component';
 import { HomeComponent } from './pages/home/home.component';
-import { ListasComponent } from './components/listas/listas.component';
+import { ListasComponent } from './features/listas/listas/listas.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
-import { ResenaComponent } from './components/resena/resena.component';
-import { authGuard } from './core/guards/auth.guard';
+import { ResenaComponent } from './features/libros/resena/resena.component';
+import { authGuard } from './core/guards/auth-guard';
 
 export const routes: Routes = [
     // --- RUTAS PÚBLICAS (redirige a /home si ya está logueado) ---
@@ -49,6 +49,18 @@ export const routes: Routes = [
         component: ResenaComponent,
         canActivate: [authGuard]
     },
+
+    // --- RUTAS ADMIN ---
+
+    /**{
+        path: 'admin',
+        component: AdminLayoutComponent, // Un layout diferente para el Admin
+        canActivate: [AdminGuard],
+        children: [
+            { path: 'usuarios', component: GestionUsuariosComponent },
+            { path: 'estadisticas', component: DashboardComponent }
+        ]
+    },*/
 
     // Para otras direcciones
     { path: '**', redirectTo: '' }

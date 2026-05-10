@@ -3,7 +3,7 @@
 <router-outlet />
 
 @if (libroService.signalLibroSeleccionado()) {
-<app-libro-detalle [libro]="libroService.signalLibroSeleccionado()" [estaLogueado]="authService.estaLogueado()"
+<app-libro-detalle [libro]="libroService.signalLibroSeleccionado()" [estaLogueado]="authService.sesion().estaLogueado"
   (cerrar)="libroService.limpiarLibroSeleccionado()" (actualizarEstado)="manejarCambioEstado($event)"
   (solicitarRegistro)="abrirRegistro()">
 </app-libro-detalle>
@@ -13,5 +13,7 @@
 <app-auth [initialMode]="modoInicialAuth()" (close)="mostrarAuth.set(false)">
 </app-auth>
 }
+
+<app-toast></app-toast>
 
 <app-footer></app-footer>

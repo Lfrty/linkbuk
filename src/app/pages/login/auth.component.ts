@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output, Input, OnInit, inject } from '@angular
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastService } from '../../core/services/toast-service';
 
 export type AuthMode = 'login' | 'registro';
 
@@ -17,6 +18,7 @@ export class AuthComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private toast = inject(ToastService);
 
   @Output() close = new EventEmitter<void>();
   @Input() initialMode: AuthMode = 'login';
@@ -65,10 +67,11 @@ export class AuthComponent implements OnInit {
     this.authService.login(credenciales).subscribe({
       next: () => {
         this.onClose();
-        // Redirige la ruta
+        this.toast.mostrar('¡Bienvenido de nuevo! ☕', 'ok');
         this.router.navigate(['/home']);
       },
       error: (err) => {
+        this.toast.mostrar('Credenciales incorrectas', 'error');
         console.error('Error en login:', err);
       }
     });

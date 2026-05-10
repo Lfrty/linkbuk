@@ -1,26 +1,61 @@
-<div class="perfil-container">
-    <h2>Mi Perfil</h2>
+<div class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-xl mx-auto bg-[--card] p-6 rounded-xl shadow-lg border border-[--border]">
+        <h2>Mi Perfil</h2>
 
-    <div class="form-group">
-        <label>Nombre</label>
-        <input [(ngModel)]="nombre" type="text" class="form-control">
+        @if (perfil){
+        <form (ngSubmit)="handleSubmit()" #authForm="ngForm">
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1.5 text-[--foreground]">
+                    Nombre de Usuario
+                </label>
+                <input [(ngModel)]="perfil.nombre" name="nombre" type="text" required placeholder="Alias"
+                    class="w-full px-4 py-2.5 rounded-lg bg-[--background]" />
+                @if (submitted && !perfil.nombre) {
+                <app-error-mensaje mensaje="El nombre no puede estar vacío" />
+                }
+            </div>
+
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1.5 text-[--foreground]">
+                    Email
+                </label>
+                <input [(ngModel)]="perfil.email" name="email" type="text" required placeholder="Correo..." readonly
+                    class="w-full px-4 py-2.5 rounded-lg bg-[--readonly]" />
+            </div>
+
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1.5 text-[--foreground]">
+                    Sobre mí
+                </label>
+                <input [(ngModel)]="perfil.biografia" name="biografia" type="text" required placeholder="Alias"
+                    class="w-full px-4 py-2.5 rounded-lg bg-[--background]" />
+            </div>
+
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1.5 text-[--foreground]">
+                    Ubicación
+                </label>
+                <input [(ngModel)]="perfil.ubicacion" name="ubicacion" type="text" required placeholder="Alias"
+                    class="w-full px-4 py-2.5 rounded-lg bg-[--background]" />
+            </div>
+
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1.5 text-[--foreground]">
+                    Permitir mensajes de desconocidos
+                </label>
+                <input [(ngModel)]="perfil.permitir_desconocidos" name="permitir_desconocidos" type="text" required
+                    placeholder="Alias" class="w-full px-4 py-2.5 rounded-lg bg-[--background]" />
+            </div>
+
+            <button type="submit"
+                class="ml-1 text-[--primary] font-semibold hover:underline decoration-2 underline-offset-4">
+                {{ 'Actualizar Perfil' }}
+            </button>
+        </form>
+        }
     </div>
-
-    <div class="form-group">
-        <label>Biografía</label>
-        <textarea [(ngModel)]="biografia" class="form-control"></textarea>
-    </div>
-
-    <div class="form-group">
-        <label>Ubicación</label>
-        <input [(ngModel)]="ubicacion" type="text" class="form-control">
-    </div>
-
-    @if (mensaje()) {
-    <p class="alert success">{{ mensaje() }}</p>
-    }
-
-    <button (click)="guardarCambios()" [disabled]="cargando()">
-        {{ cargando() ? 'Guardando...' : 'Actualizar Perfil' }}
-    </button>
 </div>

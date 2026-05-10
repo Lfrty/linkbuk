@@ -1,7 +1,6 @@
-// api.ts
 import { environment } from '../../../environments/environment';
 
-export const API = {
+export const API_URL = {
     auth: {
         login: `${environment.apiUrl}/auth/login`,
         logout: `${environment.apiUrl}/auth/logout`,

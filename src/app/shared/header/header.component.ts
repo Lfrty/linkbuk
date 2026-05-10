@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
 import { LibroService } from '../../core/services/libro.service';
 import { AuthService } from '../../core/services/auth.service';
-import { BuscadorComponent } from '../../buscador/buscador.component';
+import { BuscadorComponent } from '../../features/libros/buscador/buscador.component';
 import { Libro } from '../../models/Libro.model';
 
 @Component({

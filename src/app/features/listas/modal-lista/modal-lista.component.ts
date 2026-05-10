@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ListaService } from '../../core/services/lista.service';
-import { Lista } from '../../models/Lista.model';
+import { ListaService } from '../../../core/services/lista.service';
+import { Lista } from '../../../models/Lista.model';
 
 @Component({
   selector: 'app-modal-lista',
@@ -43,7 +43,7 @@ export class ModalListaComponent {
       next: () => {
         if (this.lista) {
           this.lista.libros = this.lista.libros?.filter(l => l.id !== libroId);
-          this.listaService.getListas(); 
+          this.listaService.getListas();
         }
       }
     });

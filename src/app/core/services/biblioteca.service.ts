@@ -2,8 +2,8 @@ import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, map, catchError, tap } from 'rxjs';
 import { Libro } from '../../models/Libro.model';
-import { API } from '../config/api';
-import { resolverPortada } from '../utils/libro-utils';
+import { API_URL } from '../constants/api_url';
+import { resolverPortada } from '../../shared/utils/libro-utils';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +22,7 @@ export class BibliotecaService {
     }
 
 
-    return this.http.get<{ ok: boolean, data: Libro[] }>(`${API.libro.search}?q=${encodeURIComponent(query)}`).pipe(
+    return this.http.get<{ ok: boolean, data: Libro[] }>(`${API_URL.libro.search}?q=${encodeURIComponent(query)}`).pipe(
       map(res => {
         return res.ok ? res.data : [];
       }),
@@ -39,7 +39,7 @@ export class BibliotecaService {
 
   // Obtener la biblioteca completa del usuario logueado
   getBibliotecaUsuario() {
-    return this.http.get<any>(API.biblioteca.listar).subscribe({
+    return this.http.get<any>(API_URL.biblioteca.listar).subscribe({
       next: (res) => {
         const librosProcesados = (res.data || []).map((libro: any) => ({
           ...libro,
@@ -54,17 +54,17 @@ export class BibliotecaService {
 
   // Actualizar o añadir un libro con un estado
   addLibro(libroId: number, estado: string, fechaFin?: Date): Observable<any> {
-    return this.http.post(API.biblioteca.estadoLibro, {
+    return this.http.post(API_URL.biblioteca.estadoLibro, {
       libro_id: libroId,
       estado_lectura: estado,
       fecha_finalizacion: fechaFin
     }).pipe(
-      tap(() => this.getBibliotecaUsuario()) // <--- TRUCO: Refresca la lista automáticamente tras éxito
+      tap(() => this.getBibliotecaUsuario())
     );
   }
 
   // Eliminar un libro de la biblioteca personal
   eliminarLibro(libroId: number): Observable<any> {
-    return this.http.delete(API.biblioteca.eliminar + `${libroId}`);
+    return this.http.delete(API_URL.biblioteca.eliminar + `${libroId}`);
   }
 }

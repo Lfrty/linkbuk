@@ -1,4 +1,4 @@
 export const environment = {
     production: false,
-    apiUrl: 'https://linkbukapi.onrender.com/api'
+    apiUrl: 'http://localhost:8000/api'//'https://linkbukAPI_URL.onrender.com/api'
 };

@@ -1,9 +1,8 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { tap, catchError, of } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { API } from '../config/api';
+import { tap } from 'rxjs';
+import { API_URL } from '../constants/api_url';
 
 @Injectable({
   providedIn: 'root'
@@ -11,33 +10,32 @@ import { API } from '../config/api';
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
-  private readonly API_URL = environment.apiUrl;
-
-  // Indica si estoy logueado
-  private _logeado = signal<boolean>(!!localStorage.getItem('token'));
 
   // Datos de usuario (privado)
   private _usuario = signal<any>(this.getInitialUser());
 
-  // Datos Usuario (Solo lectura)
-  public estaLogueado = computed(() => this._logeado());
-  public usuarioActual = computed(() => this._usuario());
-
-  // Señales para roles
-  public rolActual = computed(() => this._usuario()?.rol_name || 'usuario');
-  public esAdmin = computed(() => this.rolActual() === 'admin');
-  public esSupervisor = computed(() => this.rolActual() === 'supervisor');
-
-  public tienePermisosEspeciales = computed(() => {
-    return this.esAdmin() || this.esSupervisor();
+  // Propiedad que define propeidades de acceso del usuario
+  public sesion = computed(() => {
+    const user = this._usuario();
+    const rol = user?.rol_name || 'usuario';
+    const nombre = user?.nombre;
+    return {
+      nombre,
+      estaLogueado: !!user,
+      rol,
+      esAdmin: rol === 'admin',
+      esSupervisor: rol === 'supervisor',
+      esEspecial: rol === 'admin' || rol === 'supervisor'
+    };
   });
 
   /**
    * Login de usuario
    */
   login(credenciales: any) {
-    return this.http.post<any>(API.auth.login, credenciales).pipe(
+    return this.http.post<any>(API_URL.auth.login, credenciales).pipe(
       tap(res => {
+        console.log(res);
         // Extraemos de res.data porque así viene en tu log
         const token = res.data?.token;
         const user = res.data?.user;
@@ -47,7 +45,6 @@ export class AuthService {
           localStorage.setItem('usuario', JSON.stringify(user));
 
           this._usuario.set(user);
-          this._logeado.set(true);
         }
       })
     );
@@ -57,7 +54,7 @@ export class AuthService {
    * Registro de usuario
    */
   registro(datos: any) {
-    return this.http.post<any>(API.auth.registar, datos).pipe(
+    return this.http.post<any>(API_URL.auth.registar, datos).pipe(
       tap(res => {
         // Ahora consistente: res.data contiene token y user
         const token = res.data?.token;
@@ -66,7 +63,6 @@ export class AuthService {
         if (token) {
           localStorage.setItem('token', token);
           localStorage.setItem('usuario', JSON.stringify(user));
-          this._logeado.set(true);
           this._usuario.set(user);
         }
       })
@@ -78,14 +74,13 @@ export class AuthService {
    */
   logout() {
     // Es buena práctica avisar al backend (opcional)
-    this.http.post(API.auth.logout, {}).subscribe();
+    this.http.post(API_URL.auth.logout, {}).subscribe();
 
     // Limpiar rastro
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
 
     // Resetear signals
-    this._logeado.set(false);
     this._usuario.set(null);
 
     this.router.navigate(['/']);
@@ -99,8 +94,8 @@ export class AuthService {
   }
 
   updateProfile(userData: any) {
-    // Usamos tu ruta configurada en constantes (ej: API.user.update)
-    return this.http.put<any>(API.user.updateUser, userData).pipe(
+    // Usamos tu ruta configurada en constantes (ej: API_URL.user.update)
+    return this.http.put<any>(API_URL.user.updateUser, userData).pipe(
       tap(res => {
         // Si la API nos devuelve el usuario actualizado
         if (res.user) {
@@ -135,7 +130,6 @@ export class AuthService {
   private limpiarSesion() {
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
-    this._logeado.set(false);
     this._usuario.set(null);
   }
 

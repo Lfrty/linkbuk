@@ -9,7 +9,7 @@
                 <nav class="hidden lg:flex items-center gap-6">
                     <a routerLink="/homeusuario"
                         class="text-sm font-medium hover:text-primary transition-colors">Inicio</a>
-                    @if (authService.usuarioActual()) {
+                    @if (authService.sesion().estaLogueado && !authService.sesion().esEspecial) {
                     <a routerLink="/listas" class="text-sm font-medium hover:text-primary transition-colors">Mis
                         Listas</a>
                     }
@@ -20,14 +20,14 @@
 
                 <!-- Buscador compacto (max-w-xs para que sea pequeño) -->
                 <app-buscador></app-buscador>
-                @if (authService.usuarioActual()) {
+                @if (authService.sesion().estaLogueado) {
                 <!-- Menú Usuario -->
                 <div class="relative">
                     <button (click)="toggleUserMenu()"
                         class="flex items-center gap-2 p-2 hover:bg-muted rounded-lg transition-colors">
                         <div
                             class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-semibold">
-                            {{ authService.usuarioActual()?.nombre?.charAt(0) || 'U' }}
+                            {{ authService.sesion().nombre?.charAt(0) || 'U' }}
                         </div>
                     </button>
 

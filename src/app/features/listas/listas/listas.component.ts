@@ -1,9 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { ListaService } from '../../core/services/lista.service';
-import { ModalListaComponent } from '../modal-lista/modal-lista.component'; 
-import { Lista } from '../../models/Lista.model';
+import { ListaService } from '../../../core/services/lista.service';
+import { ModalListaComponent } from '../modal-lista/modal-lista.component';
+import { Lista } from '../../../models/Lista.model';
 
 @Component({
   selector: 'app-listas',
@@ -13,7 +12,6 @@ import { Lista } from '../../models/Lista.model';
 })
 export class ListasComponent implements OnInit {
   listaService = inject(ListaService);
-  private router = inject(Router);
 
   mostrarModal = false;
   listaParaEditar = signal<Lista | null>(null);

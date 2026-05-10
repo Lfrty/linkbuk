@@ -1,42 +1,53 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../core/services/auth.service';
+import { Usuario } from '../../models/Usuario.model';
+import { UsuarioService } from '../../core/services/usuario.service';
+import { ErrorMensajeComponent } from '../../shared/components/error-mensaje/error-mensaje.component';
+import { ToastService } from '../../core/services/toast-service';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, ErrorMensajeComponent],
   templateUrl: './perfil.component.html'
 })
-export class PerfilComponent {
-  auth = inject(AuthService);
+export class PerfilComponent implements OnInit {
 
-  // Cargamos los datos actuales del signal de usuario
-  nombre = signal(this.auth.usuarioActual()?.nombre || '');
-  biografia = signal(this.auth.usuarioActual()?.biografia || '');
-  ubicacion = signal(this.auth.usuarioActual()?.ubicacion || '');
+  private usuarioService = inject(UsuarioService);
+  private toastService = inject(ToastService);
+  public perfil: Usuario | null = null;
+  public submitted = false;
 
-  // Estado de la carga
-  cargando = signal(false);
-  mensaje = signal('');
+  ngOnInit() {
+    this.usuarioService.obtenerPerfil().subscribe({
+      next: (user) => {
+        this.perfil = user.data;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    })
+  }
 
-  guardarCambios() {
-    this.cargando.set(true);
-    const datosEditados = {
-      nombre: this.nombre(),
-      biografia: this.biografia(),
-      ubicacion: this.ubicacion()
-    };
+  handleSubmit() {
+    console.log("Entra a submit");
+    this.submitted = true;
+    if (!this.perfil?.nombre || !this.perfil?.email) {
+      console.warn("Formulario inválido");
+      return;
+    }
 
-    this.auth.updateProfile(datosEditados).subscribe({
-      next: () => {
-        this.mensaje.set('¡Perfil actualizado!');
-        this.cargando.set(false);
+    this.usuarioService.guardarPerfil(this.perfil).subscribe({
+      next: (res) => {
+        this.toastService.mostrar("Perfil  actualizado", "ok");
+        console.log("Perfil actualizado:", res.message);
       },
       error: (err) => {
-        this.mensaje.set('Error al guardar los datos');
-        this.cargando.set(false);
+        this.toastService.mostrar("Error al actualizar", "error");
+        console.error("Error al actualizar:", err);
       }
     });
+
+
   }
 }

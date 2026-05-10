@@ -35,13 +35,30 @@
     /* Más claro que la card para que el hover se note */
     --accent-foreground: #f2e6d5;
 
-    /* STATES */
-    --destructive: #d4614a;
-    --destructive-foreground: #faf8f3;
-
     /* BORDERS - El truco del contraste */
     --border: rgba(232, 220, 200, 0.2);
     /* Subido de 0.15 a 0.2 */
     --input: rgba(232, 220, 200, 0.12);
     --ring: #e8dcc8;
+
+    /* READONLY & DISABLED */
+    --readonly: #221a12;
+    --readonly-foreground: #8c7d67;
+    --disabled: #1e1812;
+    --disabled-foreground: #5a4f41;
+
+    /* INFO - Para tooltips o avisos */
+    --info: #7ea4a4;
+    --info-foreground: #1a1510;
+
+    --success: #636e3a;
+    --success-foreground: #fdfaf6;
+
+    --destructive: #9f3e2f;
+    --destructive-foreground: #fdfaf6;
+
+    --secondary: #2c2420;
+    --secondary-foreground: #d1bfa7;
+
+    --border: #e4e4e733;
 }

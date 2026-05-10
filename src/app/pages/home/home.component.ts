@@ -1,11 +1,11 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BibliotecaService } from '../../core/services/biblioteca.service';
 import { LibroService } from '../../core/services/libro.service';
 import { AuthService } from '../../core/services/auth.service';
-import { LibroCardComponent } from '../../components/libro-card/libro-card.component';
-import { LibroDetalleComponent } from '../../components/libro-detalle/libro-detalle.component';
+import { LibroCardComponent } from '../../features/libros/libro-card/libro-card.component';
+import { LibroDetalleComponent } from '../../features/libros/libro-detalle/libro-detalle.component';
 import { EstadoLectura } from '../../models/Libro.model';
 
 @Component({
@@ -18,11 +18,11 @@ import { EstadoLectura } from '../../models/Libro.model';
 export class HomeComponent implements OnInit {
   currentFilter = signal<'todos' | 'leyendo' | 'leido' | 'pendiente'>('todos');
   searchQuery = signal('');
+  public authService = inject(AuthService);
 
   constructor(
     public bibliotecaService: BibliotecaService,
-    public libroService: LibroService,
-    public authService: AuthService
+    public libroService: LibroService
   ) { }
 
   ngOnInit() {
