@@ -1,4 +1,4 @@
-import { Injectable, inject, computed } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { API_URL } from '../constants/api_url';
 import { map } from 'rxjs/operators';
@@ -21,11 +21,10 @@ export class UsuarioService {
       map(res => res));
   }
 
-  guardarPerfil(dataUsuario: Partial<Usuario>) {
+  actualizarPerfil(dataUsuario: Partial<Usuario>) {
     return this.http.put<ApiResponse<Usuario>>(API_URL.user.updateUser, dataUsuario).pipe(
       map(res => res)
     );
-
   }
 
 }

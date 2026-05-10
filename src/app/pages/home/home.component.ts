@@ -7,6 +7,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { LibroCardComponent } from '../../features/libros/libro-card/libro-card.component';
 import { LibroDetalleComponent } from '../../features/libros/libro-detalle/libro-detalle.component';
 import { EstadoLectura } from '../../models/Libro.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -18,7 +19,8 @@ import { EstadoLectura } from '../../models/Libro.model';
 export class HomeComponent implements OnInit {
   currentFilter = signal<'todos' | 'leyendo' | 'leido' | 'pendiente'>('todos');
   searchQuery = signal('');
-  public authService = inject(AuthService);
+  protected authService = inject(AuthService);
+  router = inject(Router);
 
   constructor(
     public bibliotecaService: BibliotecaService,
@@ -26,6 +28,9 @@ export class HomeComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    if (this.authService.sesion().esEspecial) {
+      this.router.navigate(['/admin/home']);
+    }
     setTimeout(() => {
       this.bibliotecaService.getBibliotecaUsuario();
     }, 50);

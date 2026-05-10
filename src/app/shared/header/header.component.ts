@@ -15,8 +15,8 @@ import { Libro } from '../../models/Libro.model';
   styleUrl: './header.component.scss',
 })
 export class Header implements OnDestroy {
-  public libroService = inject(LibroService);
-  public authService = inject(AuthService);
+  protected libroService = inject(LibroService);
+  protected authService = inject(AuthService);
 
   @Output() solicitarRegistro = new EventEmitter<void>();
   @Output() solicitarLogin = new EventEmitter<void>();

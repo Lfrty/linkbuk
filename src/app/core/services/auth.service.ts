@@ -17,7 +17,7 @@ export class AuthService {
   // Propiedad que define propeidades de acceso del usuario
   public sesion = computed(() => {
     const user = this._usuario();
-    const rol = user?.rol_name || 'usuario';
+    const rol = user?.rol_nombre || 'usuario';
     const nombre = user?.nombre;
     return {
       nombre,
@@ -36,7 +36,7 @@ export class AuthService {
     return this.http.post<any>(API_URL.auth.login, credenciales).pipe(
       tap(res => {
         console.log(res);
-        // Extraemos de res.data porque así viene en tu log
+        // Extraemos de res.data
         const token = res.data?.token;
         const user = res.data?.user;
 

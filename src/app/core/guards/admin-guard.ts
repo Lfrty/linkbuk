@@ -12,7 +12,8 @@ export const adminGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  // Si no es admin, lo mandamos al home y bloqueamos el acceso
+
+  // Si un usuario no Admin pasa por este Guard lo redirige a home
   router.navigate(['/home']);
   return false;
 };

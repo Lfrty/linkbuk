@@ -21,7 +21,7 @@ import { ToastComponent } from './shared/components/toast/toast.component';
 export class App implements OnInit {
   protected readonly title = signal('linkbuk');
 
-  public authService = inject(AuthService);
+  protected authService = inject(AuthService);
   public libroService = inject(LibroService);
   private bibliotecaService = inject(BibliotecaService);
 

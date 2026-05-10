@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { AuthComponent } from '../login/auth.component';
 import { CommonModule } from '@angular/common';
@@ -12,7 +12,7 @@ import { AuthMode } from '../login/auth.component';
   styleUrl: './landing.component.scss',
 })
 export class LandingComponent {
-  constructor(public authService: AuthService) { }
+  protected authService = inject(AuthService);
 
   showLogin = false;
   modoInicial: AuthMode = 'login';

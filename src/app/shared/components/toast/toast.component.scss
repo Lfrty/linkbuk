@@ -3,7 +3,7 @@
     @apply fixed flex items-center gap-4 top-8 right-8 z-[100] px-6 py-3 rounded-lg shadow-2xl animate-toad-slide min-w-[300px] text-xl;
 
     /* El color según el tipo */
-    &.success {
+    &.ok {
         background-color: var(--success);
         color: var(--success-foreground);
     }

@@ -6,6 +6,9 @@ import { ListasComponent } from './features/listas/listas/listas.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { ResenaComponent } from './features/libros/resena/resena.component';
 import { authGuard } from './core/guards/auth-guard';
+import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
+import { adminGuard } from './core/guards/admin-guard';
+import { GestionUsuariosComponent } from './pages/admin/gestion-usuarios/gestion-usuarios.component';
 
 export const routes: Routes = [
     // --- RUTAS PÚBLICAS (redirige a /home si ya está logueado) ---
@@ -13,19 +16,19 @@ export const routes: Routes = [
         path: '',
         component: LandingComponent,
         canActivate: [authGuard],
-        data: { redireccionPorLogueado: true }
+        data: { esInvitado: true }
     },
     {
         path: 'login',
         component: AuthComponent,
         canActivate: [authGuard],
-        data: { redireccionPorLogueado: true }
+        data: { esInvitado: true }
     },
     {
         path: 'register',
         component: AuthComponent,
         canActivate: [authGuard],
-        data: { redireccionPorLogueado: true }
+        data: { esInvitado: true }
     },
 
     // --- RUTAS PRIVADAS ---
@@ -52,15 +55,16 @@ export const routes: Routes = [
 
     // --- RUTAS ADMIN ---
 
-    /**{
-        path: 'admin',
-        component: AdminLayoutComponent, // Un layout diferente para el Admin
-        canActivate: [AdminGuard],
-        children: [
-            { path: 'usuarios', component: GestionUsuariosComponent },
-            { path: 'estadisticas', component: DashboardComponent }
-        ]
-    },*/
+    {
+        path: 'admin/home',
+        component: AdminDashboardComponent, // Un layout diferente para el Admin
+        canActivate: [adminGuard]
+    },
+    {
+        path: 'admin/usuarios',
+        component: GestionUsuariosComponent,
+        canActivate: [adminGuard]
+    },
 
     // Para otras direcciones
     { path: '**', redirectTo: '' }

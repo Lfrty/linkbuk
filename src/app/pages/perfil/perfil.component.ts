@@ -1,9 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Usuario } from '../../models/Usuario.model';
 import { UsuarioService } from '../../core/services/usuario.service';
 import { ErrorMensajeComponent } from '../../shared/components/error-mensaje/error-mensaje.component';
 import { ToastService } from '../../core/services/toast-service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-perfil',
@@ -14,40 +15,39 @@ import { ToastService } from '../../core/services/toast-service';
 export class PerfilComponent implements OnInit {
 
   private usuarioService = inject(UsuarioService);
-  private toastService = inject(ToastService);
-  public perfil: Usuario | null = null;
-  public submitted = false;
+  protected authService = inject(AuthService);
+
+  public perfil: Usuario | undefined = undefined;
+  protected submitted = false;
+
+  @Input() isAdminMode: boolean = false; // Muestra campos de Admin
+  @Input() isEditMode: boolean = true;
+  @Output() save = new EventEmitter<Usuario>();
+
+  @Input() set perfilInput(value: any) {
+    if (value) {
+      this.perfil = value;
+    }
+  }
 
   ngOnInit() {
+    if (!this.perfil) {
+      this.cargarMiPropioPerfil();
+    }
+  }
+
+  private cargarMiPropioPerfil() {
     this.usuarioService.obtenerPerfil().subscribe({
       next: (user) => {
-        this.perfil = user.data;
+        if (!this.perfil) {
+          this.perfil = user.data;
+        }
       },
-      error: (error) => {
-        console.log(error);
-      }
-    })
+      error: (error) => console.log(error)
+    });
   }
 
   handleSubmit() {
-    console.log("Entra a submit");
-    this.submitted = true;
-    if (!this.perfil?.nombre || !this.perfil?.email) {
-      console.warn("Formulario inválido");
-      return;
-    }
-
-    this.usuarioService.guardarPerfil(this.perfil).subscribe({
-      next: (res) => {
-        this.toastService.mostrar("Perfil  actualizado", "ok");
-        console.log("Perfil actualizado:", res.message);
-      },
-      error: (err) => {
-        this.toastService.mostrar("Error al actualizar", "error");
-        console.error("Error al actualizar:", err);
-      }
-    });
-
-
+    this.save.emit(this.perfil);
   }
 }
